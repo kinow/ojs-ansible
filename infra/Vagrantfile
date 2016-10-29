@@ -32,4 +32,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         v.memory = 1024
         v.cpus = 1
     end
+
+    shared_dir = "/vagrant"
 end
