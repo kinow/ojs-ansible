@@ -1,0 +1,26 @@
+---
+- name: This playbook sets up OJS infrastructure with Vagrant
+  hosts: vagrant
+  sudo: true
+  sudo_user: root
+
+  vars_files:
+    - vars/default.yml
+
+  roles:
+    - locale
+    - mysql
+    - nginx
+
+- name: This playbook sets up OJS infrastructure
+  hosts: comertec
+  sudo: true
+  sudo_user: root
+
+  vars_files:
+    - vars/default.yml
+
+  roles:
+    - locale
+    - mysql
+    - nginx

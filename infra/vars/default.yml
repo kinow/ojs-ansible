@@ -1,0 +1,37 @@
+mysql_root_password: ojs
+mysql_databases:
+  - name: ojs_db
+    encoding: latin1
+    collation: latin1_general_ci
+mysql_users:
+  - name: ojs_user
+    host: "localhost"
+    password: ojs
+    priv: "ojs_user.*:ALL"
+
+server_name: 192.168.100.100
+
+nginx_vhosts:
+  - listen: "80 ojs_server"
+    server_name: "ojs.comertec.org"
+    root: "/var/www/public_html/ojs.comertec.org"
+    index: "index.php"
+    error_page: ""
+    access_log: "/var/www/logs/ojs_access.log"
+    error_log: "/var/www/public_html/ojs_error.log"
+    extra_parameters: |
+      location ~ \.php$ {
+          fastcgi_split_path_info ^(.+\.php)(/.+)$;
+          fastcgi_pass unix:/var/run/php5-fpm.sock;
+          fastcgi_index index.php;
+          fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+          include fastcgi_params;
+      }
+    nginx_remove_default_vhost: true
+    nginx_vhosts_filename: "ojs.comertec.org.conf"
+    nginx_worker_processes: "{{ ansible_processor_vcpus|default(ansible_processor_count) }}"
+    nginx_worker_connections: "1024"
+    nginx_multi_accept: "off"
+    nginx_client_max_body_size: "5m"
+
+locale: en_US.UTF-8

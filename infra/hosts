@@ -1,0 +1,5 @@
+[vagrant]
+default ansible_ssh_host=192.168.100.100
+
+[comertec]
+ojs.comertec.org ansible_ssh_host=150.242.41.10
