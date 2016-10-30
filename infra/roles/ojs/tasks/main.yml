@@ -1,0 +1,23 @@
+---
+- name: Create web folder
+  file: path=/var/www/ojs.comertec.org/public_html state=directory mode=0755 owner=www-data group=www-data
+
+- name: Create logs folder
+  file: path=/var/www/ojs.comertec.org/logs state=directory mode=0740 owner=www-data group=www-data
+
+- name: Check permissions of nginx log folder
+  file: path=/var/log/nginx mode=0744 owner=www-data group=www-data
+
+- name: Check permissions of nginx php-fpm run folder
+  file: path=/var/run/nginx state=directory mode=0755 owner=www-data group=www-data
+
+- name: Download OJS
+  get_url:
+    url: http://pkp.sfu.ca/ojs/download/ojs-3.0.0.tar.gz
+    dest: /var/ojs.tar.gz
+    mode: 0777
+
+- name: Unpack OJS
+  shell: tar -xf /var/ojs.tar.gz -C /var/www/ojs.comertec.org/public_html --strip-components=1
+  notify:
+    - restart nginx

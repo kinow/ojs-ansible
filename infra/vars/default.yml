@@ -10,13 +10,12 @@ mysql_users:
     priv: "ojs_user.*:ALL"
 
 nginx_vhosts:
-  - listen: "80 ojs_server"
+  - listen: "80"
     server_name: "ojs.comertec.org"
-    root: "/var/www/public_html/ojs.comertec.org"
+    root: "/var/www/ojs.comertec.org/public_html/"
     index: "index.php"
-    error_page: ""
-    access_log: "/var/www/logs/ojs_access.log"
-    error_log: "/var/www/public_html/ojs_error.log"
+    access_log: "/var/www/ojs.comertec.org/logs/ojs_access.log"
+    error_log: "/var/www/ojs.comertec.org/logs/ojs_error.log"
     extra_parameters: |
       location ~ \.php$ {
           fastcgi_split_path_info ^(.+\.php)(/.+)$;
