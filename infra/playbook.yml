@@ -1,6 +1,7 @@
 ---
 - name: Provision for Ubuntu 16 and Python for Ansible
   hosts: vagrant2
+  strategy: linear
   sudo: yes
   remote_user: root
   gather_facts: no
@@ -10,6 +11,7 @@
 
 - name: This playbook sets up OJS infrastructure with Vagrant
   hosts: vagrant
+  strategy: linear
   sudo: true
   sudo_user: root
 
