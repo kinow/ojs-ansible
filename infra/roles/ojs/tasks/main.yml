@@ -6,7 +6,7 @@
   file: path=/var/www/ojs.comertec.org/public_html/cache state=directory mode=0700 owner=www-data group=www-data
 
 - name: Create upload folder
-  file: path=/var/www/ojs.comertec.org/public_html/files state=directory mode=0700 owner=www-data group=www-data
+  file: path=/var/www/ojs.comertec.org/uploads state=directory mode=0777 owner=www-data group=www-data
 
 - name: Create logs folder
   file: path=/var/www/ojs.comertec.org/logs state=directory mode=0740 owner=www-data group=www-data
@@ -58,3 +58,9 @@
     dest: /var/www/ojs.comertec.org/public_html/config.inc.php 
     regexp: 'driver = mysql$'
     replace: 'driver = mysqli\n'
+
+- name: Change OJS upload dir
+  replace: 
+    dest: /var/www/ojs.comertec.org/public_html/config.inc.php 
+    regexp: 'files_dir = files'
+    replace: 'files_dir = /var/www/ojs.comertec.org/uploads'
