@@ -4,7 +4,7 @@
 VAGRANTFILE_API_VERSION = "2"
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
-    config.vm.box = "ubuntu/trusty64"
+    config.vm.box = "gbarbieru/xenial"
 
     # Skip checking for an updated Vagrant box
     config.vm.box_check_update = false
@@ -29,8 +29,12 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     end
 
     config.vm.provider "virtualbox" do |v|
+        # https://www.virtualbox.org/manual/ch08.html
         v.memory = 1024
         v.cpus = 1
+        v.customize ["modifyvm", :id, "--pae", "on"]
+        v.customize ["modifyvm", :id, "--hwvirtex", "on"]
+        v.customize ["modifyvm", :id, "--nestedpaging", "on"]
     end
 
     shared_dir = "/vagrant"

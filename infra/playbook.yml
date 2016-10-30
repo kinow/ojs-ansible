@@ -11,6 +11,7 @@
     - locale
     - mysql
     - ojs
+    - php
     - nginx
 
 - name: This playbook sets up OJS infrastructure
@@ -25,4 +26,5 @@
     - locale
     - mysql
     - ojs
+    - php
     - nginx

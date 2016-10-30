@@ -8,8 +8,13 @@
 - name: Check permissions of nginx log folder
   file: path=/var/log/nginx mode=0744 owner=www-data group=www-data
 
+- name: Check if the php-fpm file exists
+  stat: path=/var/run/php5-fpm
+  register: php_file_exists
+
 - name: Check permissions of nginx php-fpm run folder
-  file: path=/var/run/nginx state=directory mode=0755 owner=www-data group=www-data
+  file: path=/var/run/php5-fpm.sock state=touch mode=0755 owner=www-data group=www-data
+  when: not php_file_exists.stat.exists is defined and php_file_exists.exists
 
 - name: Download OJS
   get_url:
