@@ -19,7 +19,8 @@
 
 - name: Download OJS
   get_url:
-    url: http://pkp.sfu.ca/ojs/download/ojs-3.0.0.tar.gz
+    #url: http://pkp.sfu.ca/ojs/download/ojs-3.0.0.tar.gz
+    url: https://github.com/pkp/ojs/archive/109e5f920810993a26ef36793bc7ceae66e638f5.tar.gz
     dest: /var/ojs.tar.gz
     mode: 0777
   when: ojs_installer.stat.exists == False
@@ -32,6 +33,21 @@
   when: ojs_folder_icon.stat.exists == False
   notify:
     - restart nginx
+
+# Applies only for github clone, when there is no config file
+- name: Check if config exists
+  stat: path=/var/www/ojs.comertec.org/public_html/config.inc.php
+  register: config_exists
+
+- name: Copy template config file
+  copy:
+    src: /var/www/ojs.comertec.org/public_html/config.TEMPLATE.inc.php
+    dest: /var/www/ojs.comertec.org/public_html/config.inc.php
+    owner: www-data
+    group: www-data
+    mode: u=rwX,g=rX,o=rX
+    remote_src: True
+  when: not config_exists.stat.exists
 
 - name: Fix OJS permissions
   file:
