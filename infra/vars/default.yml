@@ -53,12 +53,15 @@ nginx_vhosts:
           fastcgi_index index.php;
           fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
           include fastcgi_params;
+
+          fastcgi_buffers 16 16k; 
+          fastcgi_buffer_size 32k
       }
 nginx_remove_default_vhost: true
 nginx_worker_processes: "{{ ansible_processor_vcpus|default(ansible_processor_count) }}"
 nginx_worker_connections: "1024"
 nginx_multi_accept: "off"
-nginx_client_max_body_size: "5m"
+nginx_client_max_body_size: "64m"
 
 server_name: 192.168.100.100
 
