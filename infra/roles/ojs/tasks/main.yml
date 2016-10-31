@@ -2,37 +2,40 @@
 - name: Create web folder
   file: path=/var/www/ojs.comertec.org/public_html state=directory mode=0755 owner=www-data group=www-data
 
-- name: Create cache folder
-  file: path=/var/www/ojs.comertec.org/public_html/cache state=directory mode=0700 owner=www-data group=www-data
+# - stat: path=/var/ojs.tar.gz
+#   register: ojs_installer
 
-- name: Create upload folder
-  file: path=/var/www/ojs.comertec.org/uploads state=directory mode=0777 owner=www-data group=www-data
+# - name: Download OJS
+#   get_url:
+#     #url: http://pkp.sfu.ca/ojs/download/ojs-3.0.0.tar.gz
+#     url: https://github.com/pkp/ojs/archive/109e5f920810993a26ef36793bc7ceae66e638f5.tar.gz
+#     dest: /var/ojs.tar.gz
+#     mode: 0777
+#   when: ojs_installer.stat.exists == False
 
-- name: Create logs folder
-  file: path=/var/www/ojs.comertec.org/logs state=directory mode=0740 owner=www-data group=www-data
-
-- name: Check permissions of nginx log folder
-  file: path=/var/log/nginx state=directory mode=0744 owner=www-data group=www-data
-
-- stat: path=/var/ojs.tar.gz
-  register: ojs_installer
-
-- name: Download OJS
-  get_url:
-    #url: http://pkp.sfu.ca/ojs/download/ojs-3.0.0.tar.gz
-    url: https://github.com/pkp/ojs/archive/109e5f920810993a26ef36793bc7ceae66e638f5.tar.gz
-    dest: /var/ojs.tar.gz
-    mode: 0777
-  when: ojs_installer.stat.exists == False
+- name: Install git
+  package: name=git state=latest
 
 - stat: path=/var/www/ojs.comertec.org/public_html/favicon.ico
   register: ojs_folder_icon
 
-- name: Unpack OJS
-  shell: tar -xf /var/ojs.tar.gz -C /var/www/ojs.comertec.org/public_html --strip-components=1
+- name: Checkout OJS
+  git:
+    repo: https://github.com/pkp/ojs.git
+    dest: /var/www/ojs.comertec.org/public_html/
+    version: 109e5f920810993a26ef36793bc7ceae66e638f5
   when: ojs_folder_icon.stat.exists == False
-  notify:
-    - restart nginx
+
+- name: Init git submodules
+  shell: git submodule update --init --recursive
+  args:
+    chdir: /var/www/ojs.comertec.org/public_html 
+
+# - name: Unpack OJS
+#   shell: tar -xf /var/ojs.tar.gz -C /var/www/ojs.comertec.org/public_html --strip-components=1
+#   when: ojs_folder_icon.stat.exists == False
+#   notify:
+#     - restart nginx
 
 # Applies only for github clone, when there is no config file
 - name: Check if config exists
@@ -48,6 +51,22 @@
     mode: u=rwX,g=rX,o=rX
     remote_src: True
   when: not config_exists.stat.exists
+
+- name: Check if Composer is installed.
+  stat: "path=/var/www/ojs.comertec.org/public_html/lib/pkp/composer.phar"
+  register: composer_bin
+
+- name: Download composer dependencies
+  get_url:
+    url: https://getcomposer.org/installer
+    dest: /var/www/ojs.comertec.org/public_html/lib/pkp/composer.phar
+    mode: 0755
+  when: not composer_bin.stat.exists
+
+- name: Run composer update
+  shell: '/usr/bin/php /var/www/ojs.comertec.org/public_html/lib/pkp/composer.phar update'
+  args:
+    chdir: '/var/www/ojs.comertec.org/public_html/lib/pkp/'
 
 - name: Fix OJS permissions
   file:
@@ -80,3 +99,15 @@
     dest: /var/www/ojs.comertec.org/public_html/config.inc.php 
     regexp: 'files_dir = files'
     replace: 'files_dir = /var/www/ojs.comertec.org/uploads'
+
+- name: Create cache folder
+  file: path=/var/www/ojs.comertec.org/public_html/cache state=directory mode=0700 owner=www-data group=www-data
+
+- name: Create upload folder
+  file: path=/var/www/ojs.comertec.org/uploads state=directory mode=0777 owner=www-data group=www-data
+
+- name: Create logs folder
+  file: path=/var/www/ojs.comertec.org/logs state=directory mode=0740 owner=www-data group=www-data
+
+- name: Check permissions of nginx log folder
+  file: path=/var/log/nginx state=directory mode=0744 owner=www-data group=www-data
