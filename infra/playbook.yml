@@ -21,9 +21,9 @@
   roles:
     - locale
     - mysql
-    - ojs
-    - php
     - nginx
+    - php
+    - ojs
 
 - name: This playbook sets up OJS infrastructure
   hosts: comertec
@@ -36,6 +36,6 @@
   roles:
     - locale
     - mysql
-    - ojs
-    - php
     - nginx
+    - php
+    - ojs
