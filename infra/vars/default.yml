@@ -9,6 +9,7 @@ mysql_users:
     password: ojs
     priv: "ojs_db.*:ALL"
 
+php_enable_apc: true
 php_webserver_daemon: "nginx"
 php_enable_php_fpm: true
 php_fpm_listen: "127.0.0.1:9000"
@@ -30,6 +31,8 @@ php_packages:
   - php-pdo
   - php-xml
   - php-mysql
+  - php-apcu
+  - php-curl
 php_date_timezone: "America/Sao_Paulo"
 #php_error_reporting: "E_ALL & ~E_DEPRECATED & ~E_STRICT"
 php_error_reporting: "E_ALL & ~E_DEPRECATED"
